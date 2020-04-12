@@ -120,8 +120,14 @@ class Client:
                                                           'rate-limited.\nTelling my owner now!')
                             print(await resp.json())
                             return
-
-                        query = random.choice(json['data'])['url']
+                        
+                        try:
+                            query = random.choice(json['data'])['url']
+                        except IndexError:
+                            await event.conversation.send('Something broke... we might have gotten '
+                                                          'rate-limited.\nTelling my owner now!')
+                            print(json)
+                            return
 
                 _id = query.split('-')[-1].strip()
                 file = BytesIO()
