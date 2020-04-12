@@ -23,6 +23,7 @@ from hanger.enums import TypingStatus
 from hanger.events import EventHandler
 from hanger.presence import Presence
 from hanger.user import User
+import hanger
 
 
 class Client:
