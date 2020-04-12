@@ -104,17 +104,13 @@ class Client:
                     return await event.conversation.send('Invalid Arguments')
                 
                 if validators.url(query) is not True:
-                    search_type = 'gifs 'if event.text[1:].lower().startswith('giphy') else 'stickers'
-                    print(query)
+                    search_type = 'gifs' if event.text[1:].lower().startswith('giphy') else 'stickers'
 
                     async with self._session.get(f'https://api.giphy.com/v1/{search_type}/search',
                                                  params={'api_key': '8AP67WNl0APx30LgKvwOyi9eyI17C7XM',
                                                          'q': query, 'limit': 100, 'offset': 0,
                                                          'rating': 'PG-13', 'lang': 'en'}) as resp:
                         json = await resp.json()
-                        print(json)
-                        print(search_type)
-                        print(resp.url)
                         
                         if not json['data'] and json['meta']['status'] == 404:
                             return await event.conversation.send('No results found')
