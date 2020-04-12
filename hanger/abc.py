@@ -11,7 +11,7 @@ class Messageable(metaclass=abc.ABCMeta):
     async def _get_conversation_id(self) -> ConversationId:
         raise NotImplementedError
 
-    async def send(self, text='', location=None, image=None, me=False) -> None:
+    async def send(self, text='', location=None, image=0, me=False) -> None:
         if me:
             me = 4
         else:
