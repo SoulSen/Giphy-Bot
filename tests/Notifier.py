@@ -7,6 +7,6 @@ from hanger import Client
 
 asyncio.run(Client(
     hangups.get_auth_stdin(
-        RefreshTokenCache('./refresh-token.txt'),
+        './refresh-token.txt',
         manual_login=True)
 )._hangups_client.connect())
