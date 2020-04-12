@@ -9,5 +9,5 @@ class Image(HangupsObject):
 
     async def _build_hangups_object(self):
         return await self._client._hangups_client.upload_image(
-            self.file, filename=self.file, return_uploaded_image=True
+            self.file, filename=self.filename, return_uploaded_image=True
         )
