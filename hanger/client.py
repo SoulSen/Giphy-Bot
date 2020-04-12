@@ -126,9 +126,7 @@ class Client:
                             return await event.conversation.send('No user found')
                         
                         try:
-                            print(query)
                             query = random.choice(json['data'])['url']
-                            print(query)
                         except IndexError:
                             await event.conversation.send('Something broke... we might have gotten '
                                                           'rate-limited.\nTelling my owner now!')
