@@ -99,7 +99,7 @@ class Client:
             if event.text[1:].lower().startswith('giphy'):
                 query = event.text[7:]
 
-                if validators.url(query) is not True:
+                if not validators.url(query):
                     async with self._session.get(f'https://api.giphy.com/v1/gifs/search',
                                                  params={'api_key': '8AP67WNl0APx30LgKvwOyi9eyI17C7XM',
                                                          'q': query, 'limit': 100, 'offset': 0,
