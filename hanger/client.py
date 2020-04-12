@@ -96,20 +96,30 @@ class Client:
             return
 
         if event.text.startswith('/'):
-            if event.text[1:].lower().startswith('giphy'):
-                query = event.text[7:]
+            if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
+                try:
+                    query = event.text.split(' ')[1]
+                except IndexError:
+                    return await event.conversation.send('Invalid Arguments')
 
-                if not validators.url(query):
-                    async with self._session.get(f'https://api.giphy.com/v1/gifs/search',
+                if validators.url(query) is not True:
+                    search_type = 'gifs 'if event.text[1:].lower().startswith('giphy') else 'stickers'
+
+                    async with self._session.get(f'https://api.giphy.com/v1/{search_type}/search',
                                                  params={'api_key': '8AP67WNl0APx30LgKvwOyi9eyI17C7XM',
                                                          'q': query, 'limit': 100, 'offset': 0,
                                                          'rating': 'PG-13', 'lang': 'en'}) as resp:
-                        try:
-                            query = random.choice((await resp.json())['data'])['url']
-                        except IndexError:
+                        json = await resp.json()
+                        if not json['data'] and json['meta']['status'] == 200:
+                            return await event.conversation.send('No results found')
+
+                        if json['meta']['status'] != 200:
                             await event.conversation.send('Something broke... we might have gotten '
                                                           'rate-limited.\nTelling my owner now!')
                             print(await resp.json())
+                            return
+
+                        query = random.choice(json['data'])['url']
 
                 _id = query.split('-')[-1].strip()
                 file = BytesIO()
@@ -118,8 +128,8 @@ class Client:
                     file.write(await resp.read())
 
                 file.seek(0)
-                await event.conversation.send(image=await self._hangups_client.upload_image(
-                    file, filename='giphy.gif', return_uploaded_image=True
+                await event.conversation.send(image=hanger.Image(
+                    self, file, filename='giphy.gif'
                 ))
 
     async def _on_conversation_state_update(self, payload: StateUpdate) -> None:
