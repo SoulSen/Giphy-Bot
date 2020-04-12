@@ -121,6 +121,9 @@ class Client:
                             print(await resp.json())
                             return
                         
+                        if json['meta']['msg'] == 'User Not Found':
+                            return await event.conversation.send('No user found')
+                        
                         try:
                             query = random.choice(json['data'])['url']
                         except IndexError:
