@@ -20,8 +20,13 @@ class Messageable(metaclass=abc.ABCMeta):
         if location:
             location = location._build_hangups_object()
 
-        # if image:
-            # image = await image._build_hangups_object()
+        if not image:
+            photo = None
+        else:
+            if isinstance(image, hanger.Image):
+                photo = Photo(
+                    photo_id=(await image._build_hangups_object()).image_id
+                )
 
         conversation_id = await self._get_conversation_id()
         text = hanger.Message(text)
@@ -39,9 +44,7 @@ class Messageable(metaclass=abc.ABCMeta):
                 )
             ],
             existing_media=ExistingMedia(
-                photo=Photo(
-                    photo_id=image.image_id
-                )
+                photo=photo
             ),
             location=location
         )
