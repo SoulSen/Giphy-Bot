@@ -111,7 +111,7 @@ class Client:
                                                          'q': query, 'limit': 100, 'offset': 0,
                                                          'rating': 'PG-13', 'lang': 'en'}) as resp:
                         json = await resp.json()
-                        if not json['data'] and json['meta']['status'] == 200:
+                        if not json['data'] and json['meta']['status'] == 404:
                             return await event.conversation.send('No results found')
 
                         if json['meta']['status'] != 200:
