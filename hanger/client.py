@@ -114,6 +114,8 @@ class Client:
                         json = await resp.json()
                         print(json)
                         print(search_type)
+                        print(resp.url)
+                        
                         if not json['data'] and json['meta']['status'] == 404:
                             return await event.conversation.send('No results found')
 
