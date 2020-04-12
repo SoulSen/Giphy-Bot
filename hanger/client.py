@@ -102,7 +102,7 @@ class Client:
                     query = event.text.split(' ')[1]
                 except IndexError:
                     return await event.conversation.send('Invalid Arguments')
-
+                
                 if validators.url(query) is not True:
                     search_type = 'gifs 'if event.text[1:].lower().startswith('giphy') else 'stickers'
                     print(query)
@@ -112,6 +112,8 @@ class Client:
                                                          'q': query, 'limit': 100, 'offset': 0,
                                                          'rating': 'PG-13', 'lang': 'en'}) as resp:
                         json = await resp.json()
+                        print(json)
+                        print(search_type)
                         if not json['data'] and json['meta']['status'] == 404:
                             return await event.conversation.send('No results found')
 
