@@ -134,7 +134,10 @@ class Client:
                             print(json)
                             return
 
-                _id = query.split('-')[-1].strip()
+                _id = query.split('/')[-1]
+                if '-' in _id:
+                    _id = _id.split('-')[-1]
+                    
                 file = BytesIO()
 
                 async with self._session.get(f'https://media.giphy.com/media/{_id}/giphy.gif') as resp:
