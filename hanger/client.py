@@ -103,7 +103,7 @@ class Client:
                 except IndexError:
                     return await event.conversation.send('Invalid Arguments')
                 
-                if validators.url(query) is not True:
+                if not validators.url(query):
                     search_type = 'gifs' if event.text[1:].lower().startswith('giphy') else 'stickers'
 
                     async with self._session.get(f'https://api.giphy.com/v1/{search_type}/search',
