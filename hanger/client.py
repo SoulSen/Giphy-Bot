@@ -98,12 +98,9 @@ class Client:
 
         if event.text.startswith('/'):
             if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
-                print(event.segments[1].text)
-                try:
-                    query = " ".join(event.text.split(' ')[1:])
-                    if query == " ":
-                        raise IndexError
-                except IndexError:
+                query = event.segments[1].text
+                
+                if query == " ":
                     return await event.conversation.send('Invalid Arguments')
                 
                 if not validators.url(query):
