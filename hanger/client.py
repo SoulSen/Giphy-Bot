@@ -100,6 +100,7 @@ class Client:
             if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
                 try:
                     query = " ".join(event.text.split(' ')[1:])
+                    print(event.text.split(' ')[1:])
                     if query == " ":
                         raise IndexError
                 except IndexError:
