@@ -98,10 +98,10 @@ class Client:
 
         if event.text.startswith('/'):
             if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
-                if len(event.segments) == 1:
+                if len(event.segments) >= 1:
                     query = event.segments[1].text
                 else:
-                    query = ' '.join(event.segments[0].split(' ')[1:])
+                    query = ' '.join(event.segments[0].text.split(' ')[1:])
                     
                 if query == " ":
                     return await event.conversation.send('Invalid Arguments')
