@@ -98,9 +98,9 @@ class Client:
 
         if event.text.startswith('/'):
             if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
+                print(event.text)
                 try:
                     query = " ".join(event.text.split(' ')[1:])
-                    print(event.text.split(' '))
                     if query == " ":
                         raise IndexError
                 except IndexError:
