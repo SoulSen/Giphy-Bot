@@ -106,9 +106,6 @@ class Client:
                 except IndexError:
                     return await event.conversation.send('Invalid Arguments')
                 
-                print(query)
-                print(validators.url(query))
-                print("============")
                 if not validators.url(query):
                     search_type = 'gifs' if event.text[1:].lower().startswith('giphy') else 'stickers'
 
