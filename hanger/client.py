@@ -103,8 +103,7 @@ class Client:
                 else:
                     query = ' '.join(event.segments[0].text.split(' ')[1:])
                 
-                print(query)
-                if query == " ":
+                if query == " " or query == "":
                     return await event.conversation.send('Invalid Arguments')
                 
                 if not validators.url(query):
