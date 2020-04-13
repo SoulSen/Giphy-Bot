@@ -17,11 +17,11 @@ with open('./refresh-token.txt', 'w+') as _write_mode:
 bot = commands.Bot('/', cookies=get_auth_stdin('./refresh-token.txt', manual_login=True))
 
 
-@bot.event
+@bot.event()
 async def on_ready():
     bot._session = aiohttp.ClientSession()
     bot._giphy_api_key = os.environ['GIPHY_API_KEY']
-    
+
     print('Ready!')
 
 
