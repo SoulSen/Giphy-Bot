@@ -102,7 +102,8 @@ class Client:
                     query = event.segments[1].text
                 else:
                     query = ' '.join(event.segments[0].text.split(' ')[1:])
-                    
+                
+                print(query)
                 if query == " ":
                     return await event.conversation.send('Invalid Arguments')
                 
