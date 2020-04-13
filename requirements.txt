@@ -1,3 +1,4 @@
-hangups
+git+https://github.com/SoulSen/Hanger
 validators
 aiohttp
+

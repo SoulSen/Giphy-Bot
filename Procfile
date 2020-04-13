@@ -1,1 +1,1 @@
-worker: python tests/Notifier.py
+worker: python bot.py
