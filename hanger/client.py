@@ -98,7 +98,7 @@ class Client:
 
         if event.text.startswith('/'):
             if event.text[1:].lower().startswith('giphy') or event.text[1:].lower().startswith('stickers'):
-                print(event.text)
+                print(event.segments)
                 try:
                     query = " ".join(event.text.split(' ')[1:])
                     if query == " ":
