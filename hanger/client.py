@@ -111,7 +111,7 @@ class Client:
 
                     async with self._session.get(f'https://api.giphy.com/v1/{search_type}/search',
                                                  params={'api_key': '8AP67WNl0APx30LgKvwOyi9eyI17C7XM',
-                                                         'q': query, 'limit': 250, 'offset': 0,
+                                                         'q': query, 'limit': 150, 'offset': 0,
                                                          'rating': 'PG-13', 'lang': 'en'}) as resp:
                         json = await resp.json()
                         
