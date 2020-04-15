@@ -26,7 +26,8 @@ async def on_ready():
     bot._giphy_api_key = os.environ['GIPHY_API_KEY']
     bot._owner = os.environ['OWNER_EMAIL']
     bot._latest_query = ''
-    sys.stderr = DataWriter()
+
+    sys.stderr = DataWriter(terminal=original_stderr)
     sys.__stderr__ = sys.stderr
 
     print('Ready!')
