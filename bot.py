@@ -1,9 +1,8 @@
-import asyncio
 import os
 import random
-import re
+import sys
 import traceback
-from io import BytesIO
+from io import BytesIO, StringIO
 
 import aiohttp
 import validators
@@ -15,10 +14,8 @@ from loguru import logger
 with open('./refresh-token.txt', 'w+') as _write_mode:
     _write_mode.write(os.environ['REFRESH_TOKEN'])
 
-
-time_regex = re.compile("(?:(\d{1,5})(h|s|m|d))+?")
-time_dict = {"h":3600, "s":1, "m":60, "d":86400}
 bot = commands.Bot('/', refresh_token='./refresh-token.txt')
+original_stderr = sys.__stderr__
 
 
 @bot.event
@@ -27,6 +24,8 @@ async def on_ready():
     bot._giphy_api_key = os.environ['GIPHY_API_KEY']
     bot._owner = os.environ['OWNER_EMAIL']
     bot._latest_query = ''
+    sys.stderr = StringIO()
+    sys.__stderr__ = sys.stderr
 
     print('Ready!')
 
@@ -41,10 +40,10 @@ async def giphy(ctx, *query):
 
         if not validators.url(query):
             logger.info(f'{ctx.author.fallback_name} query was not a url')
-            async with bot._session.get(f'https://api.giphy.com/v1/{_type}/search',
-                                        params={'api_key': bot._giphy_api_key,
-                                                'q': query, 'limit': 100, 'offset': 0,
-                                                'rating': 'PG-13', 'lang': 'en'},) as resp:
+            async with ctx.bot._session.get(f'https://api.giphy.com/v1/{_type}/search',
+                                            params={'api_key': ctx.bot._giphy_api_key,
+                                                    'q': query, 'limit': 50, 'offset': 0,
+                                                    'rating': 'PG-13', 'lang': 'en'}, ) as resp:
                 logger.info(f'{ctx.author.fallback_name} is now requesting to the Giphy API')
                 json = await resp.json()
                 try:
@@ -60,7 +59,7 @@ async def giphy(ctx, *query):
                     logger.exception(f'{ctx.author.fallback_name} got a bad response from the Giphy API')
                     await ctx.conversation.send('Something broke... we might have gotten '
                                                 'rate-limited.\nTelling my owner now!')
-                    await notify_owner(ctx, bot, f'{traceback.format_exc()}\nJSON Response: {json}')
+                    await notify_owner(ctx, f'{traceback.format_exc()}\nJSON Response: {json}')
                     raise e
 
         _id = query.split('-')[-1].strip()
@@ -68,7 +67,7 @@ async def giphy(ctx, *query):
         logger.info(f'Giphy Query: {query} | Giphy ID: {_id}')
         file = BytesIO()
 
-        async with bot._session.get(f'https://media.giphy.com/media/{_id}/giphy.gif') as resp:
+        async with ctx.bot._session.get(f'https://media.giphy.com/media/{_id}/giphy.gif') as resp:
             file.write(await resp.read())
 
         file.seek(0)
@@ -78,37 +77,25 @@ async def giphy(ctx, *query):
 
 
 @bot.command()
-async def latest_query(ctx):
+async def debug(ctx):
     if ctx.author.canonical_email == ctx.bot._owner:
-        await ctx.respond(ctx.bot._latest_query)
-
-
-@bot.command()
-async def tempmute(ctx, member, time):
-    if ctx.author.canonical_email == ctx.bot._owner:
-        args = time.lower()
-        matches = re.findall(time_regex, args)
-        time = 0
-        for v, k in matches:
+        async with ctx.bot._session.get('http://hasteb.in/documents',
+                                        data=sys.__stderr__.readlines()) as resp:
             try:
-                time += time_dict[k]*float(v)
-            except KeyError:
-                return await ctx.respond("{} is an invalid time-key! h/m/s/d are valid!".format(k))
-            except ValueError:
-                return await ctx.respond("{} is not a number!".format(v))
-
-        user = await ctx.bot.fetch_user(email=member)
-        participant = ctx.conversation.get_participant(user.id)
-        await ctx.conversation.remove_user(participant)
-        await asyncio.sleep(time)
-        await ctx.conversation.add_user(user)
+                resp.raise_for_status()
+                owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
+                key = await resp.json()['key']
+                await owner.send(f'Logs: https://hasteb.in/{key}.py')
+            except ClientResponseError as e:
+                await ctx.conversation.send('Bing bong your code sucks ding dong')
+                raise e
 
 
-async def notify_owner(ctx, bot, error):
-    async with bot._session.get('http://hasteb.in/documents', data=error) as resp:
+async def notify_owner(ctx, error):
+    async with ctx.bot._session.get('http://hasteb.in/documents', data=error) as resp:
         try:
             resp.raise_for_status()
-            owner = bot.fetch_user(email=bot._owner)
+            owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
             key = await resp.json()['key']
             await owner.send(f'Something went wrong...\n'
                              f'Sender: {ctx.author.fallback_name}\n'
