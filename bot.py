@@ -88,9 +88,10 @@ async def debug(ctx):
             try:
                 resp.raise_for_status()
                 owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
-                key = await resp.json()['key']
+                key = (await resp.json())['key']
                 await owner.send(f'Logs: https://hasteb.in/{key}.py')
             except ClientResponseError as e:
+                logger.exception(f'Could not post debug to hasteb.in')
                 await ctx.conversation.send('Bing bong your code sucks ding dong')
                 raise e
 
@@ -100,12 +101,13 @@ async def notify_owner(ctx, error):
         try:
             resp.raise_for_status()
             owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
-            key = await resp.json()['key']
+            key = (await resp.json())['key']
             await owner.send(f'Something went wrong...\n'
                              f'Sender: {ctx.author.fallback_name}\n'
                              f'Message: {ctx.message}\n'
                              f'Traceback: https://hasteb.in/{key}.py')
         except ClientResponseError as e:
+            logger.exception(f"{ctx.author.fallback_name}'s error was not able to be posted to hasteb.in")
             await ctx.conversation.send('Something really really broke... notify my owner please!')
             raise e
 
