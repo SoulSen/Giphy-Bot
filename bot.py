@@ -27,6 +27,7 @@ async def on_ready():
     bot._latest_query = ''
 
     sys.stderr = DataWriter(terminal=sys.__stderr__)
+    logger.add(sys.stderr)
 
     print('Ready!')
 
