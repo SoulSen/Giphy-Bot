@@ -45,7 +45,7 @@ async def giphy(ctx, *query):
                                         params={'api_key': bot._giphy_api_key,
                                                 'q': query, 'limit': 100, 'offset': 0,
                                                 'rating': 'PG-13', 'lang': 'en'},) as resp:
-                logger.info(f'{ctx.user.fallback_name} is now requesting to the Giphy API')
+                logger.info(f'{ctx.author.fallback_name} is now requesting to the Giphy API')
                 json = await resp.json()
                 try:
                     resp.raise_for_status()
@@ -111,7 +111,7 @@ async def notify_owner(ctx, bot, error):
             owner = bot.fetch_user(email=bot._owner)
             key = await resp.json()['key']
             await owner.send(f'Something went wrong...\n'
-                             f'Sender: {ctx.user.fallback_name}\n'
+                             f'Sender: {ctx.author.fallback_name}\n'
                              f'Message: {ctx.message}\n'
                              f'Traceback: https://hasteb.in/{key}.py')
         except ClientResponseError as e:
