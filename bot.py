@@ -62,7 +62,8 @@ async def giphy(ctx, *query):
                     await notify_owner(ctx, f'{traceback.format_exc()}\nJSON Response: {json}')
                     raise e
 
-        _id = query.split('-')[-1].strip()
+        tag = query.split('/')[-1].strip()
+        _id = tag.split('-')[-1].strip()
         bot._latest_query = f'Giphy Query: {query}\nGiphy ID: {_id}'
         logger.info(f'Giphy Query: {query} | Giphy ID: {_id}')
         file = BytesIO()
