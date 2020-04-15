@@ -17,7 +17,6 @@ with open('./refresh-token.txt', 'w+') as _write_mode:
     _write_mode.write(os.environ['REFRESH_TOKEN'])
 
 bot = commands.Bot('/', refresh_token='./refresh-token.txt')
-original_stderr = sys.__stderr__
 
 
 @bot.event
@@ -27,8 +26,7 @@ async def on_ready():
     bot._owner = os.environ['OWNER_EMAIL']
     bot._latest_query = ''
 
-    sys.stderr = DataWriter(terminal=original_stderr)
-    sys.__stderr__ = sys.stderr
+    sys.stderr = DataWriter(terminal=sys.__stderr__)
 
     print('Ready!')
 
@@ -83,8 +81,10 @@ async def giphy(ctx, *query):
 @bot.command()
 async def debug(ctx):
     if ctx.author.canonical_email == ctx.bot._owner:
+        sys.stderr.seek(0)
+
         async with ctx.bot._session.post('https://hasteb.in/documents',
-                                         data=sys.__stderr__.readlines()) as resp:
+                                         data=sys.stderr.read()) as resp:
             try:
                 resp.raise_for_status()
                 owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
