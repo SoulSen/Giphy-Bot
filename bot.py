@@ -83,8 +83,8 @@ async def giphy(ctx, *query):
 @bot.command()
 async def debug(ctx):
     if ctx.author.canonical_email == ctx.bot._owner:
-        async with ctx.bot._session.get('http://hasteb.in/documents',
-                                        data=sys.__stderr__.readlines()) as resp:
+        async with ctx.bot._session.post('http://hasteb.in/documents',
+                                         data=sys.__stderr__.readlines()) as resp:
             try:
                 resp.raise_for_status()
                 owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
@@ -97,7 +97,7 @@ async def debug(ctx):
 
 
 async def notify_owner(ctx, error):
-    async with ctx.bot._session.get('http://hasteb.in/documents', data=error) as resp:
+    async with ctx.bot._session.post('http://hasteb.in/documents', data=error) as resp:
         try:
             resp.raise_for_status()
             owner = await ctx.bot.fetch_user(email=ctx.bot._owner)
