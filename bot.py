@@ -37,10 +37,10 @@ async def giphy(ctx, *query):
         _type = 'gifs' if ctx.command == 'giphy' else 'stickers'
         query = ' '.join(query)
 
-        logger.info(f'{ctx.user.fallback_name} is querying for {_type}, and is looking for {query}')
+        logger.info(f'{ctx.author.fallback_name} is querying for {_type}, and is looking for {query}')
 
         if not validators.url(query):
-            logger.info(f'{ctx.user.fallback_name} query was a url')
+            logger.info(f'{ctx.author.fallback_name} query was a url')
             async with bot._session.get(f'https://api.giphy.com/v1/{_type}/search',
                                         params={'api_key': bot._giphy_api_key,
                                                 'q': query, 'limit': 100, 'offset': 0,
@@ -52,12 +52,12 @@ async def giphy(ctx, *query):
                     gif_entries = json['data']
 
                     if len(gif_entries) == 0:
-                        logger.info(f'{ctx.user.fallback_name} got no results from his / her query')
+                        logger.info(f'{ctx.author.fallback_name} got no results from his / her query')
                         return await ctx.respond('No results found...')
 
                     query = random.choice(gif_entries)['url']
                 except ClientResponseError as e:
-                    logger.exception(f'{ctx.user.fallback_name} got a bad response from the Giphy API')
+                    logger.exception(f'{ctx.author.fallback_name} got a bad response from the Giphy API')
                     await ctx.conversation.send('Something broke... we might have gotten '
                                                 'rate-limited.\nTelling my owner now!')
                     await notify_owner(ctx, bot, f'{traceback.format_exc()}\nJSON Response: {json}')
@@ -79,13 +79,13 @@ async def giphy(ctx, *query):
 
 @bot.command()
 async def latest_query(ctx):
-    if ctx.user.canonical_email == ctx.bot._owner:
+    if ctx.author.canonical_email == ctx.bot._owner:
         await ctx.respond(ctx.bot._latest_query)
 
 
 @bot.command()
 async def tempmute(ctx, member, time):
-    if ctx.user.canonical_email == ctx.bot._owner:
+    if ctx.author.canonical_email == ctx.bot._owner:
         args = time.lower()
         matches = re.findall(time_regex, args)
         time = 0
