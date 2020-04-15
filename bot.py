@@ -2,7 +2,7 @@ import os
 import random
 import sys
 import traceback
-from io import BytesIO, StringIO
+from io import BytesIO
 
 import aiohttp
 import validators
@@ -10,6 +10,8 @@ from aiohttp import ClientResponseError
 from hanger import Image
 from hanger.ext import commands
 from loguru import logger
+
+from datawriter import DataWriter
 
 with open('./refresh-token.txt', 'w+') as _write_mode:
     _write_mode.write(os.environ['REFRESH_TOKEN'])
@@ -24,7 +26,7 @@ async def on_ready():
     bot._giphy_api_key = os.environ['GIPHY_API_KEY']
     bot._owner = os.environ['OWNER_EMAIL']
     bot._latest_query = ''
-    sys.stderr = StringIO()
+    sys.stderr = DataWriter()
     sys.__stderr__ = sys.stderr
 
     print('Ready!')
