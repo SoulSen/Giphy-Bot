@@ -72,7 +72,7 @@ async def giphy(ctx, *query):
             file.write(await resp.read())
 
         file.seek(0)
-        await ctx.send(image=Image(
+        await ctx.respond(image=Image(
             bot, file, filename='giphy.gif'
         ))
 
