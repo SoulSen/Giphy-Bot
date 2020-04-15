@@ -40,7 +40,7 @@ async def giphy(ctx, *query):
         logger.info(f'{ctx.author.fallback_name} is querying for {_type}, and is looking for {query}')
 
         if not validators.url(query):
-            logger.info(f'{ctx.author.fallback_name} query was a url')
+            logger.info(f'{ctx.author.fallback_name} query was not a url')
             async with bot._session.get(f'https://api.giphy.com/v1/{_type}/search',
                                         params={'api_key': bot._giphy_api_key,
                                                 'q': query, 'limit': 100, 'offset': 0,
@@ -65,7 +65,7 @@ async def giphy(ctx, *query):
 
         _id = query.split('-')[-1].strip()
         bot._latest_query = f'Giphy Query: {query}\nGiphy ID: {_id}'
-        logger.info(f'Giphy Query: {query}\nGiphy ID: {_id}')
+        logger.info(f'Giphy Query: {query} | Giphy ID: {_id}')
         file = BytesIO()
 
         async with bot._session.get(f'https://media.giphy.com/media/{_id}/giphy.gif') as resp:
