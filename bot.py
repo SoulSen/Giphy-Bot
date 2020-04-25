@@ -36,8 +36,11 @@ async def on_ready():
 async def giphy(ctx, *query):
     async with ctx.conversation.focused(), ctx.conversation.typing():
         _type = 'gifs' if ctx.command == 'giphy' else 'stickers'
+        
+        logger.info(f'{ctx.author.fallback_name} raw query is {query}')
+        
         query = ' '.join(query)
-
+        
         logger.info(f'{ctx.author.fallback_name} is querying for {_type}, and is looking for {query}')
 
         if not validators.url(query):
